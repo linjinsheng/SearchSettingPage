@@ -1,0 +1,377 @@
+<!--搜索设置-->
+<wxs src="homeSearchSettingPage.wxs" module="tools" />
+<view class="infoSearchBar">
+    <view class="infoSearchBar_form">
+        <view class="infoSearchBar_box">
+            <icon class="infoSearchBar_inBox" type="search" size="14"></icon>
+            <input type="text" class="infoSearchBar_input" confirm-type="search" bindconfirm="inputSearch" placeholder="请输入关键字" value="{{inputVal}}" focus="{{textFocus}}" maxlength='20' bindinput="inputTyping" />
+            <view class="weui-icon-clear" wx:if="{{inputVal.length > 0}}" bindtap="clearInput">
+                <icon type="clear" size="14"></icon>
+            </view>
+        </view>
+         <label class="infoSearchBar_label" hidden="{{inputShowed}}" bindtap="showInput">
+            <icon class="infoSearchIcon" type="search" size="14"></icon>
+            <view class="infoSearchBar_text">搜索</view>
+        </label> 
+    </view>
+    <view class="infoSearchBar_cancelBtn" hidden="{{!inputShowed}}" bindtap="hideInput">取消</view>
+</view>
+
+<!--搜索状态-->
+<block wx:if="{{isSearched}}">
+
+      <block wx:if="{{!isProjectSelected}}">
+            <view class='tabBar'>
+                <div class="tab-title" id = "tab-title">
+                      <ul wx:for="{{types}}">
+                        <li class ="{{item.state == 1?'selected':''}}" data-id="{{item.dataId}}" bindtap="select_type"> {{item.name}}</li>
+                      </ul>
+                </div>
+            </view>
+
+            <block wx:if="{{showLoading}}">
+              <view class="page-loading">
+                <image class="img-loading" src="../../image/1.gif" />
+                <text>正在玩命加载中...</text>
+              </view>
+            </block>
+
+            <block wx:else>
+                <scroll-view scroll-y="true" scroll-top="1" class="" style="height: {{windowHeight-100}}px; width: {{windowWidth}}px;" lower-threshold="50" bindscrolltolower="scrolltolower">
+
+                <!--相关资讯-->
+                <block wx:if="{{activeIndex == 0}}">
+                  <block wx:for="{{channelDisplayNewsList}}">
+                    <view  class="newsInfo" data-aid="{{item.newsSimplifyId}}" bindtap="onArticleClicked">
+
+                        <block wx:if="{{item.newsCoverImgUrl.length>0}}">
+                          <view class="left">
+                            <view class="title">
+                                {{item.newsSimplifyTitle}}
+                            </view>
+
+                            <view class="newsSource">
+                                <text>{{item.newsAuthor == null?'':item.newsAuthor}}</text>
+                            </view>
+
+                            <view class="createTime">
+                                <text>{{item.createTime == null?'':tools.sub(item.createTime)}}</text>
+                            </view>
+                          </view>
+
+                          <view class="right">
+                            <image src="{{item.newsCoverImgUrl}}"/>
+                          </view>
+                        </block>
+
+                        <block wx:if="{{item.newsCoverImgUrl.length <=0 ||item.newsCoverImgUrl == null}}">
+                            <view class="withoutPic">
+                              <view class="title">
+                                  {{item.newsSimplifyTitle}}
+                              </view>
+
+                              <view class="newsSource">
+                                  <text>{{item.newsAuthor == null?'':item.newsAuthor}}</text>
+                              </view>
+
+                              <view class="createTime">
+                                  <text>{{item.createTime == null?'':tools.sub(item.createTime)}}</text>
+                              </view>
+                            </view>
+                        </block> 
+
+                      <view style="clear:both"></view> 
+                    </view>
+                  </block>
+
+                  <block wx:if="{{showMore}}">
+                    <view class="page-loading">
+                      <image class="img-loading" src="../../image/1.gif" />
+                      <text>正在玩命加载中...</text>
+                    </view>
+                  </block>
+                </block> 
+
+                <!--关注资讯-->
+                <block wx:if="{{activeIndex == 2}}">
+                  <block wx:for="{{attentionInfoList}}">
+                    <view  class="newsInfo" data-aid="{{item.newsSimplifyId}}" bindtap="onArticleClicked">
+
+                        <block wx:if="{{item.newsCoverImgUrl.length>0}}">
+                          <view class="left">
+                            <view class="title">
+                                {{item.newsSimplifyTitle}}
+                            </view>
+
+                            <view class="newsSource">
+                                <text>{{item.newsAuthor == null?'':item.newsAuthor}}</text>
+                            </view>
+
+                            <view class="createTime">
+                                <text>{{item.createTime == null?'':tools.sub(item.createTime)}}</text>
+                            </view>
+                          </view>
+
+                          <view class="right">
+                            <image src="{{item.newsCoverImgUrl}}"/>
+                          </view>
+                        </block>
+
+                        <block wx:if="{{item.newsCoverImgUrl.length <=0 ||item.newsCoverImgUrl == null}}">
+                            <view class="withoutPic">
+                              <view class="title">
+                                  {{item.newsSimplifyTitle}}
+                              </view>
+
+                              <view class="newsSource">
+                                  <text>{{item.newsAuthor == null?'':item.newsAuthor}}</text>
+                              </view>
+
+                              <view class="createTime">
+                                  <text>{{item.createTime == null?'':tools.sub(item.createTime)}}</text>
+                              </view>
+                            </view>
+                        </block> 
+
+                      <view style="clear:both"></view> 
+                    </view>
+                  </block>
+
+                  <block wx:if="{{showMore}}">
+                    <view class="page-loading">
+                      <image class="img-loading" src="../../image/1.gif" />
+                      <text>正在玩命加载中...</text>
+                    </view>
+                  </block>
+                </block>   
+
+                <block wx:if="{{!showMore}}">
+                    <view class="page-loading">
+                      <text>没有更多内容了</text>
+                    </view>
+                </block>
+                </scroll-view>
+
+            </block>
+      </block>
+   
+      <!--项目-->
+      <block wx:if="{{isProjectSelected}}">
+
+            <view class='tabBar'>
+                <div class="tab-title" id = "tab-title">
+                      <ul wx:for="{{types}}">
+                        <li class ="{{item.state == 1?'selected':''}}" data-id="{{item.dataId}}" bindtap="select_type"> {{item.name}}</li>
+                      </ul>
+                </div>
+            </view>
+
+            <view class="section">
+
+                <view class='leftSection {{selectConditionVal?"leftSection1":""}}' bindtap='{{selectConditionVal?"deleteSortItem":""}}'>
+                筛选  {{selectConditionVal}}
+                </view>
+
+                <view class='rightSection' bindtap="expandConditionSelectPage" >
+                  <image src="{{conditionExpandCon}}" ></image>
+                </view>
+
+            </view>
+
+            <view class="section">
+                <view class='leftSortSection'>
+                排序
+                </view>
+
+                <view class='rightSortSection' bindtap="sortAction" >
+                  <text>{{selectSortVal}}</text>
+                  <image src="{{sortCon}}" ></image>
+                </view>
+            </view>
+
+            <block wx:if="{{isSortSelected}}">
+                  <view  class ="mainPage active" bindtap="sortAction">
+                  </view>
+
+                  <view  class ="sortMenu">
+                  <view wx:for="{{competitorSortList}}" 
+                      data-aid="{{item.value}}" data-keyword="{{item.name}}" class="{{item.value==selectSortIndex? 'sortOptionSelected':'sortOption'}}" bindtap="sortSelectTap" >{{item.name}}
+            </view>
+                  </view>
+            </block>
+
+            <block wx:if="{{!isConditionExpanded}}">
+
+                  <block wx:if="{{showLoading}}">
+                    <view class="page-loading">
+                      <image class="img-loading" src="../../image/1.gif" />
+                      <text>正在玩命加载中...</text>
+                    </view>
+                  </block>
+
+                  <block wx:else>
+                  <scroll-view scroll-y="true" scroll-top="1" class="" style="height: {{windowHeight-200}}px; width: {{windowWidth}}px;" lower-threshold="50" bindscrolltolower="scrolltolower">
+
+                <block wx:if="{{activeIndex == 1}}">
+                      <block wx:for="{{competitorInfoList}}">
+                        <view  class="newsInfo" data-aid="{{item.competitorId}}" bindtap="onProjectClicked"> 
+                          
+                          <view class='leftProLogo'>
+                              <image src="{{item.competitorLogoUrl}}"  mode ="aspectFit"/>
+                          </view>
+
+                          <view class='rightPro'>
+                              <view class="competitorName">
+                                  {{item.competitorName}}
+                              </view>
+
+                              <view class="projectLocalName" hidden="{{item.projectLocalName  == null}}">
+                                  <text>{{item.projectLocalName  == null?'':item.projectLocalName}}</text>
+                              </view>
+
+                              <view class="roundOfFinancingName" hidden="{{item.roundOfFinancingName  == null}}">
+                                                      <text>{{item.lastEventDate== null?'':item.lastEventDate}}{{item.lastEventDate== null?'':' '}}{{item.roundOfFinancingName}}</text>
+                              </view>
+
+                              <view class="regionName" hidden="{{item.roundOfFinancingName  == null}}">
+                                  <text>{{item.regionName}}</text>
+                              </view>
+                          </view>
+
+                          <view style="clear:both"></view> 
+                        </view>
+                      </block>
+                    </block>
+
+                      <block wx:if="{{showMore}}">
+                        <view class="page-loading">
+                          <image class="img-loading" src="../../image/1.gif" />
+                          <text>正在玩命加载中...</text>
+                        </view>
+                      </block>
+
+                      <block wx:if="{{!showMore}}">
+                        <view class="page-loading">
+                          <text>没有更多内容了</text>
+                        </view>
+                      </block>
+                  </scroll-view>
+
+                  <button class="tucaoBtn" bindtap="handleFeedback">
+                        <image class="tucaoImage" src="../../image/tucaoTwo.png"></image>
+                  </button>
+
+                  </block>
+            </block>
+
+            <block wx:if="{{isConditionExpanded}}">
+                  <scroll-view scroll-y="true" style="height: {{windowHeight-200}}px; width: {{windowWidth}}px;" >
+                    <view class="conditionTitle" hidden = "{{turnVal.length == 0}}">选中轮次</view>
+                    <!-- <view  class="region-item region-item-css}}" bindtap="deleteTurn" hidden = "{{turnVal.length == 0}}">{{turnVal}}</view>  -->
+
+                    <view class="turnListView"  style="{{'height:auto'}}" >
+                      <block wx:for="{{multiSelecteTurnList}}">
+                        <view data-keyword="{{item.name}}" data-aid="{{item.value}}" class="region-item region-item-css" bindtap="deleteTurn">{{item.name}}
+                        </view> 
+                      </block>
+                    </view> 
+
+                    <view class="conditionTitle" style='margin-top:{{(turnVal.length == 0)?25:5}}px;'>轮次</view>
+                    <view class="turnListView"  style="{{isTurnExpanded?'height:auto':'height:120px;overflow:hidden'}}" >
+                      <block wx:for="{{turnList}}">
+                        <view data-keyword="{{item.name}}" data-aid="{{item.value}}" class="{{item.selected? 'sortItemselected':'channel-item'}}" bindtap="multiSelectTurn">{{item.name}}
+                        </view> 
+                      </block>
+                    </view> 
+
+                    <view class="icon-wrap" bindtap="changeTurnList">
+                          <image class="expand_icon" src="{{turnExpandCon}}"/>
+                    </view>
+
+                    <view class="conditionTitle" hidden = "{{fieldVal.length == 0}}">选中领域</view>
+                    <view  class="region-item region-item-css}}" bindtap="deleteField" hidden = "{{fieldVal.length == 0}}">{{fieldVal}}</view> 
+                    <view class="conditionTitle" style='margin-top:{{(fieldVal.length == 0)?25:5}}px;'>领域</view>
+                    <view class="fieldListView"  style="{{isFieldExpanded?'height:auto':'height:120px;overflow:hidden'}}" >
+                      <block wx:for="{{fieldList}}">
+                            <view data-aid="{{item.fieldClassId}}" data-keyword="{{item.fieldClassName}}"  class="{{item.selected? 'sortItemselected':'channel-item'}}" bindtap="singleSelectField">{{item.fieldClassName}}
+                        </view> 
+                      </block>
+                    </view>
+
+                    <view class="icon-wrap" bindtap="changeFieldList">
+                          <image class="expand_icon"  src="{{fieldExpandCon}}"/>
+                    </view>
+
+                    <view class="conditionTitle" hidden = "{{filterDateTypeVal.length == 0}}">选中时间段</view>
+                    <view  class="region-item region-item-css}}" bindtap="deleteFilterDateType" hidden = "{{filterDateTypeVal.length == 0}}">{{filterDateTypeVal}}</view> 
+                    <view class="conditionTitle" style='margin-top:{{(filterDateTypeVal.length == 0)?25:5}}px;'>时间段</view>
+                    <view class="fieldListView"  style="'height:120px;overflow:hidden'" >
+                      <block wx:for="{{filterDateTypeList}}">
+                            <view data-aid="{{item.value}}" data-keyword="{{item.name}}"  class="{{(item.selected ||  item.value == selectFilterDateType)? 'sortItemselected':'channel-item'}}" bindtap="singleSelectFilterDateType">{{item.name}}
+                        </view> 
+                      </block>
+                    </view>
+
+                    <view class="conditionTitle" style="margin-top:15px">地域</view>
+                    <view class="conditionTitle" style="margin-top:5px" hidden = "{{provinceVal.length == 0}}">当前选中:</view>
+                    <view  class="region-item region-item-css}}" bindtap="deleteProvince" hidden = "{{provinceVal.length == 0}}">{{provinceVal}}</view> 
+                    <view  class="region-item region-item-css}}" bindtap="deleteCity" hidden = "{{cityVal.length == 0}}" >{{cityVal}}</view> 
+
+                        <picker bindchange="bindProvincePickerChange" value="{{provinceIndex}}" range="{{provinceList}}" range-name="{{provinceList[provinceIndex].regionName}}" range-key="regionName" range-id="{{provinceList[provinceIndex].regionId}}" >
+                              <button type="default"  style='width:55%;margin-top:15px'>省选择器</button>
+                        </picker>
+                        <picker bindchange="bindCityPickerChange" value="{{cityIndex}}" range="{{cityList}}" range-name="{{cityList[cityIndex].regionName}}" range-key="regionName" range-id="{{cityList[cityIndex].regionId}}">
+                              <button type="default"  style='width:55%;margin-top:15px' hidden = "{{provinceVal.length == 0}}">市选择器</button>
+                        </picker>
+
+                    <button  bindtap="confirmSelectCondition"  class="confirmBtn" type="primary" style='background-color:#227CD7' >确定</button>
+
+                  </scroll-view>
+            </block>
+      </block>
+
+</block>
+
+<!--取消搜索状态-->
+<block wx:else>
+    <view class='mainSearchPage'>
+    <scroll-view scroll-y="true" style="height:{{windowHeight-40}}px;">
+
+        <!--搜索历史-->
+        <block wx:if="{{searchHistoryStrings.length>0}}">
+            <view class="searchTitle">
+            搜索历史
+            </view>
+            <view class="searchLoadingBox">
+                <text wx:for="{{searchHistoryStrings}}" data-keyword="{{item}}" class="searchContent" bindtap="searchHistoryInfo" >{{item}}
+                </text>
+            </view>
+        </block>
+
+         <!--热门搜索-->
+        <block wx:if="{{hotSearchStrings.length>0}}">
+            <view class="searchTitle">
+            热门搜索
+            </view>
+            <view class="searchLoadingBox">
+                <text wx:for="{{hotSearchStrings}}" data-keyword="{{item}}" class="searchContent" bindtap="hotSearchInfo" >{{item}}
+                </text>
+            </view>
+        </block>
+
+        <!--热门城市-->
+        <block wx:if="{{hotSpotCityList.length>0}}">
+            <view class="searchTitle">
+            热门城市
+            </view>
+            <view class="searchLoadingBox">
+                <text wx:for="{{hotSpotCityList}}" data-keyword="{{item.regionName}}" class="searchContent" bindtap="hotSpotCitySearchInfo" >{{item.regionName}}
+                </text>
+            </view>
+        </block>
+
+
+    </scroll-view>
+    </view>
+</block>
+
